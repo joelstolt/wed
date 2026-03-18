@@ -2,13 +2,13 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Natalie & Markus — 23 Augusti 2026",
+  title: "Natalie & Markus — 5 September 2026",
   description:
-    "Vi gifter oss! Följ med oss när vi firar kärleken den 23 augusti 2026 på Norrvikens Trädgårdar, Båstad.",
+    "Vi gifter oss! Följ med oss och fira kärleken den 5 september 2026 i Gamla Uppsala Kyrka.",
   openGraph: {
-    title: "Natalie & Markus — Bröllop 23 Augusti 2026",
+    title: "Natalie & Markus — Bröllop 5 September 2026",
     description:
-      "Vi gifter oss! Följ med oss när vi firar kärleken den 23 augusti 2026.",
+      "Vi gifter oss! Följ med oss och fira kärleken den 5 september 2026.",
     type: "website",
   },
 };
