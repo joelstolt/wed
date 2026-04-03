@@ -466,9 +466,9 @@ function OSA() {
           </div>
         ) : (
           <>
-            <div className="bg-cream rounded-sm p-6 sm:p-8 mb-8">
+            <div className="bg-ivory rounded-sm p-6 sm:p-8 shadow-sm mb-8">
               <p className="text-lg text-warm-gray leading-relaxed mb-6">
-                OSA i formuläret nedan senast den 10/4. Om du har frågor hör
+                OSA i formuläret nedan senast den 30/4. Om du har frågor hör
                 gärna av dig till vårt värdpar.
               </p>
 
