@@ -380,17 +380,15 @@ function Tal() {
           <div className="space-y-6">
             <div>
               <p className="text-lg font-semibold text-charcoal">
-                Kalle Svensson
+                Joel Stolt
               </p>
-              <p className="text-warm-gray">070-123 12 12</p>
-              <p className="text-warm-gray">kalle@hotmail.se</p>
+              <p className="text-warm-gray">joelstolt90@gmail.com</p>
             </div>
             <div>
               <p className="text-lg font-semibold text-charcoal">
-                Anna Svensson
+                Madelene Stolt
               </p>
-              <p className="text-warm-gray">070-123 12 12</p>
-              <p className="text-warm-gray">anna@hotmail.se</p>
+              <p className="text-warm-gray">stolt.madelene@gmail.com</p>
             </div>
           </div>
         </div>
