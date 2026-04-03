@@ -573,7 +573,7 @@ function EraBilder() {
       for (let i = 0; i < files.length; i++) {
         const formData = new FormData();
         formData.append("file", files[i]);
-        formData.append("upload_preset", "wedding_uploads");
+        formData.append("upload_preset", "Bröllop_uppladdningar");
         formData.append("folder", "brollop");
 
         try {
