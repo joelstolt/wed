@@ -424,8 +424,29 @@ function OSA() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setFormState("sending");
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-    setFormState("sent");
+
+    const formData = {
+      antal_personer: personCount,
+      namn: names.filter(Boolean).join(", "),
+      allergier: allergies || "Inga",
+    };
+
+    try {
+      const res = await fetch("https://formspree.io/f/mzdkjpvy", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+      if (res.ok) {
+        setFormState("sent");
+      } else {
+        setFormState("idle");
+        alert("Något gick fel. Försök igen.");
+      }
+    } catch {
+      setFormState("idle");
+      alert("Något gick fel. Försök igen.");
+    }
   };
 
   return (
@@ -534,6 +555,42 @@ function OSA() {
    ───────────────────────────────────────────── */
 
 function EraBilder() {
+  const [uploading, setUploading] = useState(false);
+  const [uploadCount, setUploadCount] = useState(0);
+
+  const handleUpload = () => {
+    const input = document.createElement("input");
+    input.type = "file";
+    input.multiple = true;
+    input.accept = "image/*";
+    input.onchange = async (e) => {
+      const files = (e.target as HTMLInputElement).files;
+      if (!files || files.length === 0) return;
+
+      setUploading(true);
+      setUploadCount(0);
+
+      for (let i = 0; i < files.length; i++) {
+        const formData = new FormData();
+        formData.append("file", files[i]);
+        formData.append("upload_preset", "wedding_uploads");
+        formData.append("folder", "brollop");
+
+        try {
+          await fetch("https://api.cloudinary.com/v1_1/dqkqejzer/image/upload", {
+            method: "POST",
+            body: formData,
+          });
+          setUploadCount((prev) => prev + 1);
+        } catch {
+          // continue with next file
+        }
+      }
+      setUploading(false);
+    };
+    input.click();
+  };
+
   return (
     <section id="era-bilder" className="py-12">
       <div className="max-w-3xl mx-auto px-5">
@@ -544,8 +601,16 @@ function EraBilder() {
             Vi vore otroligt tacksamma om ni efter bröllopet ville dela med er
             av de bilder ni tagit. Ladda gärna upp dem här!
           </p>
-          <button className="inline-block font-sans text-sm tracking-[0.2em] uppercase px-10 py-3 bg-papaya text-white hover:bg-blush transition-colors rounded-sm">
-            Ladda upp
+          <button
+            onClick={handleUpload}
+            disabled={uploading}
+            className="inline-block font-sans text-sm tracking-[0.2em] uppercase px-10 py-3 bg-papaya text-white hover:bg-blush transition-colors rounded-sm disabled:opacity-50"
+          >
+            {uploading
+              ? `Laddar upp (${uploadCount})...`
+              : uploadCount > 0
+              ? `${uploadCount} bilder uppladdade!`
+              : "Ladda upp"}
           </button>
         </div>
       </div>
