@@ -402,11 +402,13 @@ function Tal() {
    ───────────────────────────────────────────── */
 
 function OSA() {
+  const [attending, setAttending] = useState<"yes" | "no" | null>(null);
   const [personCount, setPersonCount] = useState<number | null>(null);
   const [formState, setFormState] = useState<"idle" | "sending" | "sent">(
     "idle"
   );
   const [names, setNames] = useState<string[]>([""]);
+  const [declineName, setDeclineName] = useState("");
   const [allergies, setAllergies] = useState("");
 
   useEffect(() => {
@@ -423,11 +425,18 @@ function OSA() {
     e.preventDefault();
     setFormState("sending");
 
-    const formData = {
-      antal_personer: personCount,
-      namn: names.filter(Boolean).join(", "),
-      allergier: allergies || "Inga",
-    };
+    const formData =
+      attending === "yes"
+        ? {
+            svar: "Kommer",
+            antal_personer: personCount,
+            namn: names.filter(Boolean).join(", "),
+            allergier: allergies || "Inga",
+          }
+        : {
+            svar: "Kan tyvärr inte komma",
+            namn: declineName,
+          };
 
     try {
       const res = await fetch("https://formspree.io/f/mzdkjpvy", {
@@ -461,7 +470,9 @@ function OSA() {
               Tack för ditt svar!
             </h3>
             <p className="text-lg text-warm-gray">
-              Vi ser fram emot att fira med dig.
+              {attending === "yes"
+                ? "Vi ser fram emot att fira med dig."
+                : "Vi hade gärna velat se dig, men tack för att du meddelade."}
             </p>
           </div>
         ) : (
@@ -472,28 +483,60 @@ function OSA() {
                 gärna av dig till vårt värdpar.
               </p>
 
-              <p className="text-center text-lg text-warm-gray mb-4">
-                Välj antalet personer att OSA för:
-              </p>
-              <div className="flex justify-center gap-3">
-                {[1, 2, 3, 4, 5].map((n) => (
-                  <button
-                    key={n}
-                    type="button"
-                    onClick={() => setPersonCount(n)}
-                    className={`w-12 h-12 text-lg font-medium rounded-sm transition-colors ${
-                      personCount === n
-                        ? "bg-papaya text-white"
-                        : "bg-honeydew text-charcoal hover:bg-rosey"
-                    }`}
-                  >
-                    {n}
-                  </button>
-                ))}
+              <div className="flex flex-col sm:flex-row justify-center gap-3 mb-6">
+                <button
+                  type="button"
+                  onClick={() => setAttending("yes")}
+                  className={`font-sans text-sm tracking-[0.15em] uppercase px-6 py-3 rounded-sm transition-colors ${
+                    attending === "yes"
+                      ? "bg-papaya text-white"
+                      : "bg-honeydew text-charcoal hover:bg-rosey"
+                  }`}
+                >
+                  Ja, jag kommer
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setAttending("no");
+                    setPersonCount(null);
+                  }}
+                  className={`font-sans text-sm tracking-[0.15em] uppercase px-6 py-3 rounded-sm transition-colors ${
+                    attending === "no"
+                      ? "bg-papaya text-white"
+                      : "bg-honeydew text-charcoal hover:bg-rosey"
+                  }`}
+                >
+                  Kan tyvärr inte komma
+                </button>
               </div>
+
+              {attending === "yes" && (
+                <>
+                  <p className="text-center text-lg text-warm-gray mb-4">
+                    Välj antalet personer att OSA för:
+                  </p>
+                  <div className="flex justify-center gap-3">
+                    {[1, 2, 3, 4, 5].map((n) => (
+                      <button
+                        key={n}
+                        type="button"
+                        onClick={() => setPersonCount(n)}
+                        className={`w-12 h-12 text-lg font-medium rounded-sm transition-colors ${
+                          personCount === n
+                            ? "bg-papaya text-white"
+                            : "bg-honeydew text-charcoal hover:bg-rosey"
+                        }`}
+                      >
+                        {n}
+                      </button>
+                    ))}
+                  </div>
+                </>
+              )}
             </div>
 
-            {personCount !== null && (
+            {attending === "yes" && personCount !== null && (
               <form onSubmit={handleSubmit} className="space-y-6">
                 {names.map((name, i) => (
                   <div key={i}>
@@ -537,6 +580,34 @@ function OSA() {
                     className="inline-block font-sans text-sm tracking-[0.15em] uppercase px-10 py-3 bg-papaya text-white hover:bg-blush transition-colors disabled:opacity-50 rounded-sm"
                   >
                     {formState === "sending" ? "Skickar..." : "Skicka OSA"}
+                  </button>
+                </div>
+              </form>
+            )}
+
+            {attending === "no" && (
+              <form onSubmit={handleSubmit} className="space-y-6">
+                <div>
+                  <label className="block text-sm text-warm-gray mb-1">
+                    Namn
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={declineName}
+                    onChange={(e) => setDeclineName(e.target.value)}
+                    placeholder="För- och efternamn"
+                    className="w-full border border-honeydew rounded-sm px-4 py-3 text-lg text-charcoal placeholder:text-warm-gray/50"
+                  />
+                </div>
+
+                <div className="text-center pt-2">
+                  <button
+                    type="submit"
+                    disabled={formState === "sending"}
+                    className="inline-block font-sans text-sm tracking-[0.15em] uppercase px-10 py-3 bg-papaya text-white hover:bg-blush transition-colors disabled:opacity-50 rounded-sm"
+                  >
+                    {formState === "sending" ? "Skickar..." : "Skicka svar"}
                   </button>
                 </div>
               </form>
